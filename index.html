@@ -7,114 +7,176 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* 极度细腻的深邃渐变背景切换逻辑 */
         .gradient-bg {
-            background: linear-gradient(135deg, #060b14 0%, #1a365d 40%, #1e40af 100%);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #020617 0%, #0b1528 40%, #1e3a8a 100%);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
         .gradient-bg.theme-b {
-            background: linear-gradient(135deg, #0b0f19 0%, #162a45 40%, #854d0e 100%);
+            background: linear-gradient(135deg, #030712 0%, #111827 40%, #7c2d12 100%);
         }
-        .glow-button {
-            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-            transition: all 0.2s ease;
+        
+        /* 最高标准毛玻璃面板：多层阴影与微流光边框 */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 20px 40px -10px rgba(0, 0, 0, 0.5);
         }
-        .glow-button:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 0 22px rgba(245, 158, 11, 0.6);
+
+        /* 高级微流光动画 */
+        @keyframes flowBorder {
+            0% { border-color: rgba(245, 158, 11, 0.2); }
+            50% { border-color: rgba(245, 158, 11, 0.6); }
+            100% { border-color: rgba(245, 158, 11, 0.2); }
         }
-        /* 胶囊滑块平滑切换动画 */
-        .slider-indicator {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .flow-border-active {
+            animation: flowBorder 3s infinite ease-in-out;
         }
-        /* 高级微弱卡片物理阴影 */
-        .premium-shadow {
-            box-shadow: 0 10px 30px -5px rgba(2, 12, 27, 0.04), 0 1px 3px -1px rgba(0, 0, 0, 0.02);
+
+        /* 隐藏滚动条 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* 骨架屏动画 */
+        @keyframes shimmer {
+            100% { transform: translateX(100%); }
+        }
+        .shimmer::after {
+            position: absolute;
+            top: 0; right: 0; bottom: 0; left: 0;
+            transform: translateX(-100%);
+            background-image: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.1) 60%, rgba(255,255,255,0) 100%);
+            animation: shimmer 1.5s infinite;
+            content: '';
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+<body class="bg-[#f8fafc] text-slate-800 font-sans antialiased selection:bg-blue-600 selection:text-white">
 
-    <div class="bg-white border-b border-gray-200 py-3 px-6 shadow-xs sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-gray-600 gap-2">
-            <div class="flex items-center space-x-2">
-                <a href="#" class="hover:text-blue-600 transition">首页</a>
-                <span class="text-gray-300">/</span>
-                <span class="text-slate-900 font-semibold">金融保险线上超市</span>
+    <div class="bg-slate-950 text-slate-400 py-2.5 px-4 text-xs font-normal border-b border-slate-900 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+            <div class="flex items-center space-x-3 tracking-wide">
+                <span class="text-slate-600">当前网关入口:</span>
+                <span class="bg-slate-800 px-2 py-0.5 rounded text-slate-300 font-mono text-[11px] border border-slate-700">NODE-CN-EAST-1</span>
+                <span class="text-slate-700">/</span>
+                <a href="#" class="hover:text-white transition-colors">首页</a>
+                <span class="text-slate-700">/</span>
+                <span class="text-slate-200 font-medium">汽车金融保险线上超市 v1.12.4</span>
             </div>
-            <div class="flex items-center space-x-4 text-gray-400">
-                <button onclick="openEmbedModal()" class="text-blue-600 font-semibold hover:underline bg-blue-50 px-2.5 py-1 rounded transition-all hover:bg-blue-100"><i class="fas fa-code mr-1"></i> 获取原子组件内嵌代码</button>
-                <span>|</span>
-                <span class="text-slate-700 font-medium"><i class="fab fa-weixin mr-1 text-green-500"></i> 小程序: CIECC二手车</span>
+            <div class="flex items-center space-x-6 text-[11px]">
+                <button onclick="toggleComponentModal()" class="hover:text-blue-400 flex items-center transition-colors group">
+                    <i class="fas fa-code text-blue-500 mr-1.5 group-hover:scale-110 transition-transform"></i>获取原子组件嵌入式 iframe 代码
+                </button>
+                <span class="text-slate-800">|</span>
+                <span class="flex items-center text-slate-300">
+                    <i class="fab fa-weixin text-emerald-500 mr-1.5"></i>官方小程序: <span class="font-bold ml-1 text-white">CIECC二手车</span>
+                </span>
+                <span class="text-slate-800">|</span>
+                <div class="flex items-center space-x-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-slate-300">数据信托运行正常</span>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="main-banner" class="gradient-bg text-white py-12 px-6 relative overflow-hidden">
-        <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
-        <div class="max-w-7xl mx-auto relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            
-            <div class="lg:col-span-7">
-                <div class="inline-flex items-center gap-2 bg-amber-500 bg-opacity-20 border border-amber-500 border-opacity-30 text-amber-300 text-xs font-semibold px-3 py-1.5 rounded-full mb-4">
-                    <i class="fas fa-fire text-amber-400"></i> 【降本增效】银行利息直降 · 车险一键比价 · 车商车主双向无忧
+    <div id="hero-banner" class="gradient-bg text-white pt-16 pb-32 px-6 relative overflow-hidden">
+        <div class="absolute inset-0 opacity-5 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:20px_20px]"></div>
+        
+        <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div class="lg:col-span-7 space-y-6">
+                <div class="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-3 py-1.5 rounded-full text-blue-300 text-xs font-medium backdrop-blur-sm">
+                    <i class="fas fa-shield-halved text-amber-400"></i>
+                    <span>【降本增效】银行利息直降 · 车险一键比价 · 车商车主双向无忧</span>
                 </div>
-                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 leading-tight">
-                    一站式汽车金融保险超市<br class="hidden md:inline"><span class="text-amber-400" id="banner-dynamic-title">库存融资在线秒批，车贷车险一键触达！</span>
+                
+                <h1 class="text-3xl md:text-5xl font-black tracking-tight leading-[1.2]">
+                    汽车流通消费金融保险<br>
+                    <span class="bg-gradient-to-r from-amber-400 via-orange-300 to-yellow-200 bg-clip-text text-transparent">线上智能一站式超市</span>
                 </h1>
-                <p class="text-xs md:text-sm leading-relaxed text-blue-100 opacity-90 mb-6 max-w-xl shadow-xs" id="banner-dynamic-desc">
-                    买车卖车，一个超市全搞定！直连主流合作银行与各大保险巨头，全线打通汽车金融与保险链路。车商端一键申请巨额库存授信，车主端即刻尊享低息分期与官方车险直通车。融资快、贷款稳、投保省、出单高，全链路赋能汽车交易新体验！
+                
+                <p class="text-slate-300 text-sm md:text-base max-w-2xl leading-relaxed">
+                    深度打通大宗商品汽车全生命周期数字化服务闭环。<span class="text-amber-400 font-semibold">面向B端流通车商</span>，开辟高额在库动产质押融资与车险代销合规增收渠道；<span class="text-emerald-400 font-semibold">面向C端消费者</span>，提供极低费率购车分期与新能源专属三电延保直免方案，全面释放汽车以旧换新政策红利。
                 </p>
-                <div class="flex flex-wrap gap-2 text-xs">
-                    <span class="bg-blue-400 bg-opacity-20 border border-blue-400 border-opacity-30 text-blue-300 px-2.5 py-1.5 rounded-lg font-medium"><i class="fas fa-bank mr-1 text-amber-400"></i>工商银行/渤海银行：在库融资利息更低</span>
-                    <span class="bg-emerald-400 bg-opacity-20 border border-emerald-400 border-opacity-30 text-emerald-300 px-2.5 py-1.5 rounded-lg font-medium"><i class="fas fa-shield-halved mr-1 text-emerald-400"></i>中国平安保险：三电延保凭报告直减20%</span>
-                    <span class="bg-purple-400 bg-opacity-20 border border-purple-400 border-opacity-30 text-purple-300 px-2.5 py-1.5 rounded-lg font-medium"><i class="fas fa-bolt mr-1 text-purple-400"></i>大宗提振：配合兴业银行专项换新信贷</span>
+
+                <div class="flex flex-wrap gap-2 pt-2">
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs flex items-center text-slate-300"><i class="fas fa-building-columns text-amber-400 mr-2"></i>多元在库动产融资</span>
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs flex items-center text-slate-300"><i class="fas fa-charging-station text-emerald-400 mr-2"></i>三电系统特定延保</span>
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs flex items-center text-slate-300"><i class="fas fa-bolt text-blue-400 mr-2"></i>多行联合秒级预审</span>
+                    <span class="bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl text-xs flex items-center text-slate-300"><i class="fas fa-scale-balanced text-purple-400 mr-2"></i>诉讼记录自动化前置对齐</span>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 w-full">
-                <div class="bg-slate-900 bg-opacity-40 border border-white border-opacity-15 rounded-2xl p-5 shadow-2xl backdrop-blur-md text-slate-900" id="risk-engine-panel">
-                    <h3 class="text-white text-sm font-bold flex items-center justify-between mb-3.5">
-                        <span class="flex items-center gap-2"><i class="fas fa-circle-dollar-to-slot text-amber-400 animate-pulse"></i> 10秒多行联合测额入口</span>
-                        <span class="text-[10px] text-amber-300 bg-amber-500 bg-opacity-20 px-2 py-0.5 rounded-full font-normal">宇信科技核心技术支持</span>
-                    </h3>
-                    
-                    <div class="space-y-3.5" id="engine-form-zone">
-                        <div class="relative grid grid-cols-2 p-1 bg-black bg-opacity-30 rounded-xl overflow-hidden border border-white border-opacity-5">
-                            <div id="engine-slider-block" class="slider-indicator absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white rounded-lg shadow-md z-0"></div>
-                            <button onclick="switchEngineType('B')" id="engine-btn-B" class="relative py-2 text-xs font-bold rounded-xl text-blue-900 z-10 transition-colors duration-300">我是车商(申请库存融资)</button>
-                            <button onclick="switchEngineType('C')" id="engine-btn-C" class="relative py-2 text-xs font-bold rounded-xl text-blue-100 opacity-80 hover:opacity-100 z-10 transition-colors duration-300">我是车主(分期购车/投保)</button>
-                        </div>
-                        <div class="relative">
-                            <input type="text" id="engine-id-input" placeholder="请输入企业统一社会信用代码" class="w-full bg-white border border-transparent rounded-xl px-3 py-2.5 text-xs text-slate-900 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:shadow-md">
-                            <div id="input-error-tip" class="hidden absolute left-0 -bottom-8 bg-red-600 text-white text-[10px] px-2 py-1 rounded shadow-md z-20 font-sans"></div>
-                        </div>
-                        <button id="engine-submit-btn" onclick="runRiskEngine()" class="w-full bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold py-3 rounded-xl shadow-lg transition flex items-center justify-center gap-2 glow-button">
-                            <i class="fas fa-calculator"></i> 立即进行跨行额度测算
+            <div class="lg:col-span-5">
+                <div id="form-container" class="glass-card rounded-2xl p-6 relative flow-border-active">
+                    <div class="flex items-center justify-between text-xs text-slate-400 mb-5 pb-3 border-b border-slate-800/60">
+                        <span class="flex items-center font-medium text-slate-200"><i class="fas fa-server text-blue-400 mr-1.5"></i>联合征信信托预审前置端点</span>
+                        <span class="text-[10px] text-slate-400 bg-slate-800 px-2 py-0.5 rounded border border-slate-700/60">宇信科技技术支持</span>
+                    </div>
+
+                    <div class="flex p-1 bg-slate-950/80 rounded-xl mb-5 border border-slate-800/80">
+                        <button onclick="toggleGatewayMode('A')" id="tab-mode-a" class="flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md">
+                            车商端 (库存融资/贴息)
+                        </button>
+                        <button onclick="toggleGatewayMode('B')" id="tab-mode-b" class="flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+                            车主端 (个人分期/险种)
                         </button>
                     </div>
-                    
-                    <div class="hidden text-white py-4 text-center space-y-3" id="engine-loading-zone">
-                        <div class="animate-spin text-amber-400 text-2xl"><i class="fas fa-circle-notch"></i></div>
-                        <p class="text-xs text-blue-200 tracking-wider font-mono animate-pulse" id="engine-loading-txt">正在调取商业银行银企直连安全沙盒...</p>
-                    </div>
-                    
-                    <div class="hidden text-white space-y-3" id="engine-result-zone">
-                        <div class="bg-emerald-600 bg-opacity-20 border border-emerald-500 border-opacity-30 p-3 rounded-xl text-xs flex items-start gap-2.5">
-                            <i class="fas fa-circle-check text-emerald-400 text-sm mt-0.5"></i>
-                            <div>
-                                <span class="font-bold text-emerald-400 block mb-0.5">🎉 授信模型匹配成功</span>
-                                <span class="text-slate-200 text-[11px] leading-relaxed" id="engine-result-desc">您的资质已通过银行预审。</span>
+
+                    <form onsubmit="handleMainFormSubmit(event)" class="space-y-4">
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs">
+                                <i id="input-icon-main" class="fas fa-building text-slate-400"></i>
+                            </span>
+                            <input id="input-core-credential" type="text" required class="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition-all font-mono" placeholder="请输入企业统一社会信用代码">
+                        </div>
+
+                        <div class="grid grid-cols-12 gap-2">
+                            <div class="col-span-8 relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500 text-xs"><i class="fas fa-key text-slate-500"></i></span>
+                                <input id="input-token-credential" type="text" required class="w-full bg-slate-950/60 border border-slate-800 rounded-xl pl-10 pr-4 py-3 text-xs font-mono text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30 transition-all" placeholder="前置核验令牌 车况报告单编码">
+                            </div>
+                            <button type="button" onclick="triggerNetworkVerification()" class="col-span-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold rounded-xl transition-all shadow-md active:scale-[0.98] flex items-center justify-center">
+                                <span>联合预审</span>
+                            </button>
+                        </div>
+
+                        <div id="gateway-feedback-panel" class="hidden bg-slate-950/80 border border-emerald-500/30 rounded-xl p-4 text-xs space-y-3 relative overflow-hidden">
+                            <div id="gateway-loader" class="space-y-2 py-1">
+                                <div class="h-3.5 bg-slate-800 rounded w-2/3 relative overflow-hidden shimmer"></div>
+                                <div class="h-3 bg-slate-800 rounded w-full relative overflow-hidden shimmer"></div>
+                            </div>
+                            <div id="gateway-real-data" class="hidden space-y-2">
+                                <div class="flex items-center text-emerald-400 font-bold">
+                                    <i class="fas fa-circle-check text-sm mr-2 animate-bounce"></i>
+                                    <span id="txt-feedback-status">多方信托联合鉴权完毕，免除线下重复审查</span>
+                                </div>
+                                <div class="pl-6 space-y-1 bg-slate-900/40 p-2.5 rounded-lg border border-slate-800">
+                                    <p id="txt-feedback-detail" class="text-slate-300 font-medium leading-relaxed"></p>
+                                    <p id="txt-feedback-audit" class="text-[10px] text-slate-500 font-mono tracking-wider"></p>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex gap-2 pt-1">
-                            <button onclick="highlightPremiumProducts()" class="flex-1 bg-amber-500 text-slate-950 text-xs font-bold py-2.5 rounded-lg text-center hover:bg-amber-600 transition shadow-md hover:scale-[1.01]">去挑选对应行金融产品</button>
-                            <button onclick="resetRiskEngine()" class="text-slate-400 hover:text-white text-[11px] px-2 transition">重新测额</button>
-                        </div>
-                    </div>
 
-                    <div class="mt-4 pt-3 border-t border-white border-opacity-10 flex items-center justify-between text-[11px] text-blue-200 font-mono">
-                        <div class="flex items-center gap-1.5 truncate">
-                            <i class="fas fa-volume-high text-amber-400 animate-bounce"></i>
-                            <span id="rolling-broadcast" class="transition-all duration-500">安徽某商户 凭借车况单成功匹配渤海银行库存融资 120 万元</span>
+                        <div class="pt-1">
+                            <button type="submit" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white font-bold rounded-xl py-3.5 text-xs tracking-wider transition-all shadow-lg shadow-blue-950 flex items-center justify-center space-x-2 active:scale-[0.99]">
+                                <span>正式向对应行/保司生产节点递交申请</span>
+                                <i class="fas fa-arrow-right text-[10px]"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="mt-5 pt-3 border-t border-slate-800/80 flex items-center space-x-2 text-[11px]">
+                        <span class="flex h-2 w-2 relative shrink-0">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+                        </span>
+                        <div class="relative w-full h-4 overflow-hidden text-slate-400 font-medium">
+                            <div id="ticker-broadcast-text" class="absolute w-full transition-all duration-500 transform translate-y-0">
+                                安徽某商户 凭车况单成功匹配渤海银行库存融资 120 万元 (5分钟前)
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -122,670 +184,591 @@
         </div>
     </div>
 
-    <div class="bg-white border-b border-gray-200 shadow-xs py-4 px-6">
-        <div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div class="border-r border-gray-100 last:border-0">
-                <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400 mb-0.5">合作银行总行入驻</span>
-                <span class="text-lg md:text-xl font-extrabold text-slate-900 font-mono">5 <span class="text-xs font-sans font-bold text-gray-500">家核心行</span></span>
+    <div class="max-w-7xl mx-auto px-4 -mt-10 relative z-20">
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xl grid grid-cols-2 md:grid-cols-4 p-2 gap-2 backdrop-blur-md">
+            <div class="p-4 text-center border-r border-slate-100 last:border-none">
+                <p class="text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-center"><i class="fas fa-landmark text-slate-400 mr-1.5"></i>合作银行总行入驻</p>
+                <p class="text-xl font-black text-slate-900">5 <span class="text-xs font-bold text-slate-500 ml-0.5">家核心行</span></p>
             </div>
-            <div class="border-r border-gray-100 last:border-0">
-                <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400 mb-0.5">多行直连日活跃申请</span>
-                <span class="text-lg md:text-xl font-extrabold text-blue-600 font-mono">7,226 <span class="text-xs font-sans font-bold text-gray-500">笔</span></span>
+            <div class="p-4 text-center border-r border-slate-100 last:border-none">
+                <p class="text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-center"><i class="fas fa-chart-line text-blue-500 mr-1.5"></i>多行直连日申请量</p>
+                <p class="text-xl font-black text-blue-600">7,226 <span class="text-xs font-bold text-blue-400 ml-0.5">笔/日</span></p>
             </div>
-            <div class="border-r border-gray-100 last:border-0">
-                <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400 mb-0.5">银企直连综合贴息幅度</span>
-                <span class="text-lg md:text-xl font-extrabold text-emerald-600 font-mono">15.8% <span class="text-xs font-sans font-bold text-gray-500">平均</span></span>
+            <div class="p-4 text-center border-r border-slate-100 last:border-none">
+                <p class="text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-center"><i class="fas fa-percentage text-emerald-500 mr-1.5"></i>银企直连平均贴息</p>
+                <p class="text-xl font-black text-emerald-600">15.8% <span class="text-xs font-bold text-emerald-400 ml-0.5">综合</span></p>
             </div>
-            <div class="border-r border-gray-100 last:border-0">
-                <span class="block text-[10px] uppercase font-bold tracking-wider text-gray-400 mb-0.5">宇信核心前置网关时效</span>
-                <span class="text-lg md:text-xl font-extrabold text-amber-600 font-mono">0.4 <span class="text-xs font-sans font-bold text-gray-500">秒级</span></span>
+            <div class="p-4 text-center border-r border-slate-100 last:border-none">
+                <p class="text-[11px] font-bold text-slate-400 mb-1 flex items-center justify-center"><i class="fas fa-gauge-high text-amber-500 mr-1.5"></i>前置网关响应时效</p>
+                <p class="text-xl font-black text-amber-600">0.4 <span class="text-xs font-bold text-amber-400 ml-0.5">秒级响应</span></p>
             </div>
         </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 pt-12">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white border border-slate-800 p-6 rounded-2xl shadow-2xl relative overflow-hidden">
+            <div class="absolute right-0 top-0 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl"></div>
+            <div class="text-xs font-bold text-slate-200 flex items-center mb-5 tracking-wider uppercase">
+                <i class="fas fa-cubes text-blue-400 mr-2 animate-pulse"></i>平台核心生态联动与国家政策专项专区
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl space-y-2 hover:border-blue-500/30 transition-colors">
+                    <div class="flex items-center space-x-2">
+                        <span class="p-1.5 bg-blue-500/10 rounded-lg text-blue-400 text-xs"><i class="fas fa-file-shield"></i></span>
+                        <h4 class="text-xs font-bold text-slate-200">车况查询服务联动</h4>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">申请险种或动产质押时，凭平台官方车况报告单直连保险/银行系统，<span class="text-blue-400 font-semibold">免除线下繁琐人工拆检测验</span>。</p>
+                </div>
+                
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl space-y-2 hover:border-amber-500/30 transition-colors">
+                    <div class="flex items-center space-x-2">
+                        <span class="p-1.5 bg-amber-500/10 rounded-lg text-amber-400 text-xs"><i class="fas fa-circle-nodes"></i></span>
+                        <h4 class="text-xs font-bold text-slate-200">企业信用评价赋能</h4>
+                    </div>
+                    <p class="text-[11px] text-slate-400 leading-relaxed">B端授信全面拉通中小企业国家级信用评级，凡<span class="text-amber-400 font-semibold">评级在A级及以上主体</span>，前置网关自动激活快速审批绿色通道。</p>
+                </div>
+                
+                <div class="bg-slate-900/60 border border-slate-800/80 p-4 rounded-xl space-y-2 hover:border-emerald-500/30 transition-colors">
+                    <div class="flex items-center space-x-2">
+                        <span class="p-1.5 bg-emerald-500/10 rounded-lg text-emerald-400 text-xs"><i class="fas fa-graduation-cap"></i></span>
+                        <h4 class="text-xs font-bold text-slate-200">技能培训权益增值</h4>
+                    </div>
+                    <p class="text-[11px] text-slate-500 leading-relaxed">凡持有官方认证汽车流通技术证书的主体企业，在申请联合金融货架产品时，享受<span class="text-emerald-400 font-semibold">专属阶梯约定利率直降优惠</span>。</p>
+                </div>
+                
+                <div class="bg-gradient-to-br from-emerald-950/80 to-slate-950 border border-emerald-800/60 p-4 rounded-xl space-y-2">
+                    <div class="flex items-center space-x-2">
+                        <span class="p-1.5 bg-emerald-500/20 rounded-lg text-emerald-300 text-xs"><i class="fas fa-arrows-spin"></i></span>
+                        <h4 class="text-xs font-bold text-emerald-200">汽车以旧换新专项</h4>
+                    </div>
+                    <p class="text-[11px] text-emerald-200/80 leading-relaxed">紧密契合大宗商品消费升级政策，开辟专项老旧置换绿色贴息通道，全面支持<span class="font-bold text-white">零首付、低利息、长期限</span>审批。</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-        <div class="mb-8 bg-gradient-to-r from-amber-50 via-orange-50 to-emerald-50 border border-amber-200 rounded-2xl p-5 shadow-xs">
-            <h3 class="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
-                <i class="fas fa-bolt text-amber-600"></i> 平台核心生态联动与国家政策专项专区
+    <div class="max-w-7xl mx-auto px-4 pt-10">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-slate-100">
+                <div class="flex bg-slate-100/80 p-1 rounded-xl space-x-1 self-start">
+                    <button onclick="filterProducts('all', this)" class="filter-tab-btn bg-white text-slate-900 shadow-sm px-4 py-1.5 rounded-lg text-xs font-bold transition-all">
+                        全部超市货架
+                    </button>
+                    <button onclick="filterProducts('B', this)" class="filter-tab-btn text-slate-500 hover:text-slate-800 px-4 py-1.5 rounded-lg text-xs font-bold transition-all">
+                        面向车商 (B端)
+                    </button>
+                    <button onclick="filterProducts('C', this)" class="filter-tab-btn text-slate-500 hover:text-slate-800 px-4 py-1.5 rounded-lg text-xs font-bold transition-all">
+                        面向消费者 (C端)
+                    </button>
+                </div>
+                
+                <div class="relative w-full sm:max-w-xs">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400 text-xs"><i class="fas fa-magnifying-glass"></i></span>
+                    <input id="search-input" oninput="executeLiveSearch()" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white transition-all" placeholder="输入机构名、产品类型、额度关键词...">
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="flex items-start sm:items-center space-x-4">
+                    <span class="text-slate-400 w-20 font-bold shrink-0 pt-0.5 sm:pt-0">核心机构范围:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="filterOrg('all', this)" class="org-tag-btn bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold text-[11px]">全部机构</button>
+                        <button onclick="filterOrg('bank-state', this)" class="org-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">国有大行</button>
+                        <button onclick="filterOrg('bank-stock', this)" class="org-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">全国性股份制银行</button>
+                        <button onclick="filterOrg('insurance', this)" class="org-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">头部财产险企</button>
+                    </div>
+                </div>
+                <div class="flex items-start sm:items-center space-x-4">
+                    <span class="text-slate-400 w-20 font-bold shrink-0 pt-0.5 sm:pt-0">业务生命周期:</span>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button onclick="filterCycle('all', this)" class="cycle-tag-btn bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold text-[11px]">全周期链条</button>
+                        <button onclick="filterCycle('stock', this)" class="cycle-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">车源收车与在库期</button>
+                        <button onclick="filterCycle('transaction', this)" class="cycle-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">过户流转与交易期</button>
+                        <button onclick="filterCycle('aftermarket', this)" class="cycle-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100">售后维保与长效保障</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-10 space-y-12">
+        
+        <div class="space-y-5">
+            <h3 class="text-sm font-black text-slate-900 flex items-center tracking-wider">
+                <span class="w-1.5 h-4 bg-blue-600 rounded-full mr-2.5"></span>数字化汽车金融专属超市货架
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div class="bg-white p-3.5 rounded-xl border border-amber-100 flex items-start gap-3">
-                    <div class="bg-amber-100 text-amber-700 p-2 rounded-lg text-sm shrink-0"><i class="fas fa-search"></i></div>
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-900">车况查询服务联动</h4>
-                        <p class="text-[11px] text-gray-500 mt-1">购买“经典二手车险”时，凭平台官方车况报告单可一键免除线下验车环节。</p>
+            <div id="grid-finance" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="product-card bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all flex flex-col justify-between group" data-target="B" data-org="bank-stock" data-cycle="stock">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-600 border border-blue-100">渤海银行总行</span>
+                            <span class="text-[10px] text-emerald-500 font-mono font-bold flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span>网关节点就绪</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors search-title">车商订单式库存融资贷</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed min-h-[44px]">依托官方流通凭证，由宇信科技提供技术前置连接，专项突破中小微车商收车阶段垫资痛点，全面激活在库动产质押高效授信。</p>
+                        
+                        <div class="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-400">单店测算授信上限</span>
+                            <span class="text-base font-black text-slate-900">300 <span class="text-xs font-bold text-slate-500 font-normal">万元</span></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 flex items-center"><i class="fas fa-boxes-stacked mr-1.5 text-slate-400"></i>在库动产质押</span>
+                        <button onclick="openExecutionModal('渤海银行·车商订单式库存融资贷')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm active:scale-[0.97]">申请收车授信</button>
                     </div>
                 </div>
-                <div class="bg-white p-3.5 rounded-xl border border-amber-100 flex items-start gap-3">
-                    <div class="bg-blue-100 text-blue-700 p-2 rounded-lg text-sm shrink-0"><i class="fas fa-award"></i></div>
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-900">企业信用评价赋能</h4>
-                        <p class="text-[11px] text-gray-500 mt-1">B端授信服务直连流通企业信用评级，评级A级以上企业享有专属绿色审批通道。</p>
+
+                <div class="product-card bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all flex flex-col justify-between group" data-target="B" data-org="bank-state" data-cycle="transaction">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-600 border border-blue-100">中国工商银行</span>
+                            <span class="text-[10px] text-slate-400 font-mono">普惠特设专区</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors search-title">二手车商普惠经营快贷</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed min-h-[44px]">基于流通企业的实体交易开票额度、信用沉淀以及平台车况数据底座，借助前置预审算法一键下发纯信用短期周转资金。</p>
+                        
+                        <div class="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-400">综合普惠授信最高</span>
+                            <span class="text-base font-black text-blue-600">500 <span class="text-xs font-bold text-blue-400 font-normal">万元</span></span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 flex items-center"><i class="fas fa-barcode mr-1.5 text-slate-400"></i>凭证识别免去复审</span>
+                        <button onclick="openExecutionModal('工商银行·二手车商普惠经营快贷')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm active:scale-[0.97]">车商一键测额</button>
                     </div>
                 </div>
-                <div class="bg-white p-3.5 rounded-xl border border-amber-100 flex items-start gap-3">
-                    <div class="bg-green-100 text-green-700 p-2 rounded-lg text-sm shrink-0"><i class="fas fa-graduation-cap"></i></div>
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-900">技能培训权益增值</h4>
-                        <p class="text-[11px] text-gray-500 mt-1">参与汽车电商培训的认证学员，其运营主体在申请金融产品时可享利率阶梯优惠。</p>
+
+                <div class="product-card bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-purple-400/50 transition-all flex flex-col justify-between group" data-target="C" data-org="bank-stock" data-cycle="transaction">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-purple-50 text-purple-600 border border-purple-100">广发银行总行</span>
+                            <span class="text-[10px] text-slate-400 font-mono">个人消费消贷</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900 group-hover:text-purple-600 transition-colors search-title">“广发车秒贷”二手车专项</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed min-h-[44px]">专为二手车个人买家匹配的高效线上分期产品，后端直接打通公安过户流转校验链路，秒级反馈最终终端授信额度。</p>
+                        
+                        <div class="bg-purple-50/50 p-3 rounded-xl flex items-center justify-between border border-purple-100">
+                            <span class="text-[11px] font-bold text-purple-600">综合折算年化费率</span>
+                            <span class="text-xs font-bold text-purple-700">享受专属绿色贴息方案</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 flex items-center"><i class="fas fa-bolt mr-1.5 text-purple-400"></i>网关自动化高速审批</span>
+                        <button onclick="openExecutionModal('广发银行·“广发车秒贷”二手车专项')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm border border-purple-700 active:scale-[0.97]">个人额度试算</button>
                     </div>
                 </div>
-                <div class="bg-gradient-to-br from-emerald-600 to-teal-700 p-3.5 rounded-xl text-white flex items-start gap-3 shadow-sm">
-                    <div class="bg-white bg-opacity-20 text-white p-2 rounded-lg text-sm shrink-0"><i class="fas fa-arrows-rotate"></i></div>
-                    <div>
-                        <h4 class="text-xs font-bold">汽车以旧换新专项</h4>
-                        <p class="text-[11px] text-emerald-100 mt-1">响应国家大宗消费提振政策，本超市特别甄选低首付、长账期以旧换新专项补贴金融方案。</p>
-                    </div>
-                </div>
+
             </div>
         </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-6">
-            <div class="flex flex-col md:flex-row gap-4 items-center justify-between border-b border-gray-100 pb-5 mb-5">
-                <div class="flex p-1 bg-gray-100 rounded-xl w-full md:w-auto">
-                    <button onclick="filterMain('all')" id="tab-all" class="flex-1 md:flex-none px-5 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-xs transition">全部产品</button>
-                    <button onclick="filterMain('b-side')" id="tab-b-side" class="flex-1 md:flex-none px-5 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">面向车商</button>
-                    <button onclick="filterMain('c-side')" id="tab-c-side" class="flex-1 md:flex-none px-5 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition">面向消费者</button>
+        <div class="space-y-5">
+            <h3 class="text-sm font-black text-slate-900 flex items-center tracking-wider">
+                <span class="w-1.5 h-4 bg-emerald-600 rounded-full mr-2.5"></span>数字化汽车保险与特定保障货架
+            </h3>
+            <div id="grid-insurance" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <div class="product-card bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-emerald-400/50 transition-all flex flex-col justify-between group" data-target="C" data-org="insurance" data-cycle="aftermarket">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">中国平安保险</span>
+                            <span class="text-[10px] text-slate-400 font-mono">新能源核心延保</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900 group-hover:text-emerald-600 transition-colors search-title">新能源“三电”系统特定延保险</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed min-h-[44px]">专项覆盖新能源车辆电池、电机、电控系统核心衰减险种。凭平台出具的官方权威车况报告SOH健康度评定，全流程极速承保。</p>
+                        
+                        <div class="bg-emerald-50 p-3 rounded-xl flex items-center justify-between border border-emerald-100">
+                            <span class="text-[11px] font-bold text-emerald-700">SOH健康度优待规则</span>
+                            <span class="text-base font-black text-emerald-600">保费指定减免 20%</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 flex items-center"><i class="fas fa-shield-cat mr-1.5 text-emerald-400"></i>平安产险全国通赔一体化</span>
+                        <button onclick="openExecutionModal('中国平安·新能源二手车“三电”系统特定延保险')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm active:scale-[0.97]">在线核定保费</button>
+                    </div>
                 </div>
-                <div class="relative w-full md:w-80">
-                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 text-xs"><i class="fas fa-search"></i></span>
-                    <input type="text" id="search-input" oninput="searchProducts()" placeholder="输入银行名称、三电、延保、库存关键字..." class="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-blue-500 focus:bg-white focus:outline-none transition">
+
+                <div class="product-card bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-blue-400/50 transition-all flex flex-col justify-between group" data-target="C" data-org="bank-stock" data-cycle="transaction">
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[10px] px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-600 border border-blue-100">兴业银行总行</span>
+                            <span class="text-[10px] text-slate-400 font-mono">绿色大宗金融</span>
+                        </div>
+                        <h4 class="text-sm font-black text-slate-900 group-hover:text-blue-600 transition-colors search-title">“绿色大宗”汽车以旧换新专项贴息贷</h4>
+                        <p class="text-[11px] text-slate-500 leading-relaxed min-h-[44px]">紧密响应国家推进大宗商品以旧换新与报废升级行动开辟，兴业银行绿色金融部专项支持，旧车残值直抵首付款项。</p>
+                        
+                        <div class="bg-slate-50 p-3 rounded-xl flex items-center justify-between border border-slate-100">
+                            <span class="text-[11px] font-bold text-slate-400">战略政策专款额度</span>
+                            <span class="text-xs font-bold text-slate-800">低利率 / 支持最长60期</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between pt-4 mt-5 border-t border-slate-100 text-[11px]">
+                        <span class="text-slate-400 flex items-center"><i class="fas fa-leaf text-emerald-500 mr-1.5"></i>国家报废换新指定</span>
+                        <button onclick="openExecutionModal('兴业银行·“绿色大宗”汽车以旧换新专项贴息贷')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl transition-all shadow-sm active:scale-[0.97]">启用绿色通道</button>
+                    </div>
+                </div>
+
+                <div id="search-fallback-card" class="hidden col-span-1 md:col-span-3 bg-slate-100 border-2 border-dashed border-slate-200 rounded-2xl p-12 text-center space-y-3">
+                    <span class="text-slate-300 text-3xl"><i class="fas fa-folder-open"></i></span>
+                    <p class="text-xs font-bold text-slate-500">未检索到完全匹配的行/保司专属超市产品</p>
+                    <p class="text-[11px] text-slate-400">建议缩短关键字长度，或直接联系CIECC平台技术服务网关进行手动配置绑定。</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-4 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            <div onclick="triggerDocumentDownload('工商银行·二手车商普惠白皮书.pdf')" class="bg-white border border-slate-200 p-4 rounded-xl flex items-start space-x-3 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <span class="text-blue-600 text-lg mt-0.5 group-hover:scale-110 transition-transform"><i class="fas fa-file-pdf"></i></span>
+                <div>
+                    <h5 class="text-xs font-black text-slate-900">工商银行·二手车商普惠白皮书.pdf</h5>
+                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">内含精准的多行联合测额前置标准、平台数据信托联合风控接入规范细则。</p>
                 </div>
             </div>
             
-            <div class="space-y-3.5 text-xs">
-                <div class="flex items-center"><span class="text-gray-500 font-bold w-20 shrink-0 border-r border-gray-200 mr-2">产品来源：</span>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="filterSub('source', 'all', this)" class="sub-src-btn px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 font-semibold shadow-xs flex items-center gap-1">不限<i class="fas fa-check text-[9px]"></i></button>
-                        <button onclick="filterSub('source', 'state', this)" class="sub-src-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition">国有大行专区</button>
-                        <button onclick="filterSub('source', 'joint', this)" class="sub-src-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition">股份制商业银行</button>
-                    </div>
-                </div>
-                <div class="flex items-center"><span class="text-gray-500 font-bold w-20 shrink-0 border-r border-gray-200 mr-2">生命周期：</span>
-                    <div class="flex flex-wrap gap-2">
-                        <button onclick="filterSub('scene', 'all', this)" class="sub-scn-btn px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 font-semibold shadow-xs flex items-center gap-1">不限<i class="fas fa-check text-[9px]"></i></button>
-                        <button onclick="filterSub('scene', 'stock', this)" class="sub-scn-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition">收车与在库期(融资)</button>
-                        <button onclick="filterSub('scene', 'trade', this)" class="sub-scn-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition">车辆交易期(分期)</button>
-                        <button onclick="filterSub('scene', 'use', this)" class="sub-scn-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition">用车维保期(三电/延保)</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm mb-8 grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="p-4 bg-slate-50 rounded-xl border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition group">
-                    <h5 class="text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5">
-                        <i class="fas fa-book-open text-blue-600"></i> 工商银行·二手车商普惠白皮书
-                    </h5>
-                    <p class="text-[11px] text-gray-500 leading-relaxed">说明通过车辆过户发票额度与平台留存凭证动态测额的精细评级规则。</p>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-xl border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition group">
-                    <h5 class="text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5">
-                        <i class="fas fa-book-open text-amber-500"></i> 渤海银行·在库动产质押授信指南
-                    </h5>
-                    <p class="text-[11px] text-gray-500 leading-relaxed">关于12123查封前置审查及车况三电核验单作为定向降息凭证的规定说明。</p>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-xl border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition group">
-                    <h5 class="text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5">
-                        <i class="fas fa-book-open text-red-500"></i> 广发银行·消费分期风控准入细则
-                    </h5>
-                    <p class="text-[11px] text-gray-500 leading-relaxed">关于车秒贷专项产品针对个人征信模型及车辆历史事故报告的过滤门槛。</p>
-                </div>
-                <div class="p-4 bg-slate-50 rounded-xl border border-gray-100 hover:bg-blue-50 hover:border-blue-200 transition group">
-                    <h5 class="text-xs font-bold text-slate-900 mb-1 flex items-center gap-1.5">
-                        <i class="fas fa-book-open text-emerald-500"></i> 中国平安·新能源核保核价白皮书
-                    </h5>
-                    <p class="text-[11px] text-gray-500 leading-relaxed">针对三电系统特定延保免人工拆检、凭SOH健康度因子直接减保费的标准。</p>
-                </div>
-            </div>
-            <div class="lg:col-span-1 bg-gradient-to-br from-slate-900 to-blue-900 rounded-xl p-5 text-white flex flex-col justify-between shadow-md">
+            <div onclick="triggerDocumentDownload('渤海银行·在库动产质押授信指南.pdf')" class="bg-white border border-slate-200 p-4 rounded-xl flex items-start space-x-3 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <span class="text-amber-600 text-lg mt-0.5 group-hover:scale-110 transition-transform"><i class="fas fa-file-pdf"></i></span>
                 <div>
-                    <h4 class="text-xs font-bold tracking-wider text-blue-300 flex items-center gap-1.5">
-                        <i class="fas fa-download"></i> 联合政策文件合集
-                    </h4>
-                    <p class="text-[11px] text-slate-300 mt-1.5 leading-relaxed">内含四家行保主体官方联合签发的数据资产确权及线上超市综合贴息管理办法。</p>
-                </div>
-                <button onclick="alert('官方联合授信规则白皮书及降息政策打包文档已开始下载...')" class="w-full mt-4 bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-bold py-2 rounded-lg text-center transition shadow shadow-amber-500/20">
-                    立即下载白皮书文档
-                </button>
-            </div>
-        </div>
-
-        <div id="no-data-block" class="hidden bg-white border border-gray-200 rounded-2xl p-12 text-center premium-shadow mb-10 transition-all">
-            <div class="text-blue-500 opacity-60 text-4xl mb-3"><i class="fas fa-magnifying-glass-chart"></i></div>
-            <h4 class="text-sm font-bold text-slate-800">暂未匹配到符合当前交叉条件的金融保险产品</h4>
-            <p class="text-xs text-gray-400 mt-1">建议您减少筛选维度、或者重置选项查看全部产品</p>
-            <button onclick="resetAllFilters()" class="mt-4 bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-xl hover:bg-blue-700 shadow-sm transition">重置筛选条件</button>
-        </div>
-
-        <section class="mb-10" id="sec-finance">
-            <div class="flex items-center justify-between border-b border-gray-200 pb-3 mb-6">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-2.5 h-5 bg-blue-600 rounded-full"></div>
-                    <h2 class="text-lg font-bold text-slate-900 tracking-tight">汽车金融</h2>
+                    <h5 class="text-xs font-black text-slate-900">渤海银行·在库动产质押授信指南.pdf</h5>
+                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">包含在库阶段动产质押确权、车辆轨迹监控标准及诉讼前置免复审规约。</p>
                 </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="product-item b-side joint stock bg-white rounded-2xl border border-gray-200 overflow-hidden premium-shadow hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between" data-title="渤海银行 二手车商库存融资贷款 动产质押 宇信科技">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-blue-50 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-100">渤海银行总行</span>
-                            <span class="bg-blue-100 text-blue-800 text-[10px] font-medium px-2 py-0.5 rounded">收车在库期</span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-900 mb-1.5 flex items-center gap-1">渤海银行·车商订单式库存融资贷</h3>
-                        <p class="text-slate-500 text-xs leading-relaxed mb-3">依托部委平台数据凭证，由宇信科技提供技术连接。针对中小车商收车垫资痛点，提供在库车辆动产质押专项授信。</p>
-                        <div class="space-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-slate-500">
-                            <div class="flex items-center justify-between"><span>单店额度：</span><span class="font-bold text-slate-900">最高 300 万元</span></div>
-                        </div>
-                        <div class="mt-4 pt-2.5 border-t border-dashed border-gray-200 flex flex-wrap items-center justify-between text-[10px] font-medium text-emerald-600">
-                            <div class="flex gap-2">
-                                <span><i class="fas fa-circle-check mr-0.5"></i>12123查封状态正常</span>
-                                <span><i class="fas fa-scale-balanced mr-0.5"></i>诉讼记录风控已对齐</span>
-                            </div>
-                            <span class="text-gray-400 font-mono text-[9px]"><i class="fas fa-clock mr-0.5 animate-spin"></i>实时联动中</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        <div class="text-[10px] text-slate-400 font-mono">渤海银行网关直连</div>
-                        <button onclick="openApplyModal('渤海银行·车商订单式库存融资贷', '渤海银行B端经营贷')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm hover:scale-[1.03]">申请收车授信</button>
-                    </div>
-                </div>
-
-                <div class="product-item b-side state trade bg-white rounded-2xl border border-gray-200 overflow-hidden premium-shadow hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between" data-title="工商银行 汽车流通企业普惠授信服务 数据资产确权">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-red-50 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded border border-red-100">中国工商银行</span>
-                            <span class="bg-blue-100 text-blue-800 text-[10px] font-medium px-2 py-0.5 rounded">企业普惠贷</span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-900 mb-1.5">工商银行·二手车商普惠经营快贷</h3>
-                        <p class="text-slate-500 text-xs leading-relaxed mb-3">基于二手车流通企业的合规经营数据、交易开票额度以及平台留存的车辆历史报告凭证进行的线上综合普惠授信。</p>
-                        <div class="space-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-slate-500">
-                            <div class="flex items-center justify-between"><span>综合额度：</span><span class="font-bold text-slate-900">最高 500 万元</span></div>
-                        </div>
-                        <div class="mt-4 pt-2.5 border-t border-dashed border-gray-200 flex flex-wrap items-center justify-between text-[10px] font-medium text-emerald-600">
-                            <div class="flex gap-2">
-                                <span><i class="fas fa-circle-check mr-0.5"></i>工行数字化普惠模型</span>
-                                <span><i class="fas fa-shield-halved mr-0.5"></i>全链路脱敏流转</span>
-                            </div>
-                            <span class="text-gray-400 font-mono text-[9px]"><i class="fas fa-clock mr-0.5 animate-spin"></i>实时联动中</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        <div class="text-[10px] text-slate-400 font-mono">工行银企直连通道</div>
-                        <button onclick="openApplyModal('工商银行·二手车商普惠经营快贷', '工行普惠贷')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm hover:scale-[1.03]">车商一键测额</button>
-                    </div>
-                </div>
-
-                <div class="product-item c-side joint trade bg-white rounded-2xl border border-gray-200 overflow-hidden premium-shadow hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between" data-title="广发银行 二手车消费分期 购车贷款 常规汽车交易">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-red-50 text-red-800 text-[10px] font-bold px-2 py-0.5 rounded border border-red-100">广发银行总行</span>
-                            <span class="bg-purple-100 text-purple-800 text-[10px] font-medium px-2 py-0.5 rounded">车辆交易期</span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-900 mb-1.5">广发银行·“广发车秒贷”二手车专项</h3>
-                        <p class="text-slate-500 text-xs leading-relaxed mb-3">广发银行面向个人消费者推出的线上二手车购车分期产品，直接拉通12123过户审查网络，秒级下发审批额度。</p>
-                        <div class="space-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-slate-500">
-                            <div class="flex items-center justify-between"><span>分期费率：</span><span class="font-bold text-slate-900">享折算年化超低优待</span></div>
-                        </div>
-                        <div class="mt-4 pt-2.5 border-t border-dashed border-gray-200 flex flex-wrap items-center justify-between text-[10px] font-medium text-emerald-600">
-                            <div class="flex gap-2">
-                                <span><i class="fas fa-circle-check mr-0.5"></i>直连征信预检模型</span>
-                                <span><i class="fas fa-car-burst mr-0.5"></i>维保记录合规对齐</span>
-                            </div>
-                            <span class="text-gray-400 font-mono text-[9px]"><i class="fas fa-clock mr-0.5 animate-spin"></i>实时联动中</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        <div class="text-[10px] text-slate-400 font-mono">广发车秒贷生产网关</div>
-                        <button onclick="openApplyModal('广发银行·“广发车秒贷”二手车专项', '广发零售车贷')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm hover:scale-[1.03]">申请额度试算</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="mb-10" id="sec-insurance">
-            <div class="flex items-center justify-between border-b border-gray-200 pb-3 mb-6">
-                <div class="flex items-center space-x-2.5">
-                    <div class="w-2.5 h-5 bg-green-600 rounded-full"></div>
-                    <h2 class="text-lg font-bold text-slate-900 tracking-tight">汽车保险及维保</h2>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="product-item c-side state use bg-white rounded-2xl border border-gray-200 overflow-hidden premium-shadow hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between" data-title="中国平安 个人车险 新新能源汽车三电专项维保证保险 电池电机电控">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-orange-50 text-orange-700 text-[10px] font-bold px-2 py-0.5 rounded border border-orange-100">中国平安保险</span>
-                            <span class="bg-green-100 text-green-800 text-[10px] font-medium px-2 py-0.5 rounded">用车维保期</span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-900 mb-1.5 flex items-center gap-1">中国平安·新能源二手车“三电”系统特定延保险</h3>
-                        <p class="text-slate-500 text-xs leading-relaxed mb-3">专项覆盖新能源二手车电池、电机、电控系统。凭平台导出的无重大安全事故检测报告及SOH健康度因子，在线直接核保承保。</p>
-                        <div class="space-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-slate-500">
-                            <div class="flex items-center justify-between"><span>保障范围：</span><span class="text-green-600 font-bold">平安产险全国通赔</span></div>
-                        </div>
-                        <div class="mt-4 pt-2.5 border-t border-dashed border-gray-200 flex flex-wrap items-center justify-between text-[10px] font-medium text-emerald-600">
-                            <div class="flex gap-2">
-                                <span><i class="fas fa-circle-check mr-0.5"></i>平安产险核价模型对齐</span>
-                                <span><i class="fas fa-charging-station mr-0.5"></i>报告免人工拆检</span>
-                            </div>
-                            <span class="text-gray-400 font-mono text-[9px]"><i class="fas fa-clock mr-0.5 animate-spin"></i>实时联动中</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        <div class="text-[10px] text-slate-400 font-mono">中国平安直连保费试算</div>
-                        <button onclick="openApplyModal('中国平安·新能源三电特定延保险', '平安特种质保险')" class="bg-green-600 hover:bg-green-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm hover:scale-[1.03]">在线评估保费</button>
-                    </div>
-                </div>
-
-                <div class="product-item c-side joint trade bg-white rounded-2xl border border-gray-200 overflow-hidden premium-shadow hover:shadow-xl hover:-translate-y-0.5 transition duration-300 flex flex-col justify-between" data-title="兴业银行 汽车老旧报废更新专项消费贷 以旧换新 绿色金融">
-                    <div class="p-5">
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-blue-50 text-blue-800 text-[10px] font-bold px-2 py-0.5 rounded border border-blue-100">兴业银行总行</span>
-                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-medium px-2 py-0.5 rounded">老旧车换新</span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-900 mb-1.5">兴业银行·“绿色大宗”汽车以旧换新专项贴息贷</h3>
-                        <p class="text-slate-500 text-xs leading-relaxed mb-3">紧密承接国家大宗商品汽车置换补贴政策，由兴业银行绿色金融部特设。面向办理报废换新、老旧车置换的个人提供低息专项授信。</p>
-                        <div class="space-y-1.5 border-t border-gray-100 pt-2.5 text-xs text-slate-500">
-                            <div class="flex items-center justify-between"><span>产品标签：</span><span class="text-emerald-600 font-bold">兴业绿色金融认证</span></div>
-                        </div>
-                        <div class="mt-4 pt-2.5 border-t border-dashed border-gray-200 flex flex-wrap items-center justify-between text-[10px] font-medium text-emerald-600">
-                            <div class="flex gap-2">
-                                <span><i class="fas fa-circle-check mr-0.5"></i>直连财政补贴审核线</span>
-                                <span><i class="fas fa-recycle mr-0.5"></i>旧车残值直抵首付</span>
-                            </div>
-                            <span class="text-gray-400 font-mono text-[9px]"><i class="fas fa-clock mr-0.5 animate-spin"></i>实时联动中</span>
-                        </div>
-                    </div>
-                    <div class="bg-slate-50 px-5 py-3 border-t border-gray-100 flex items-center justify-between">
-                        <div class="text-[10px] text-slate-400 font-mono">兴业绿色信贷系统对接</div>
-                        <button onclick="openApplyModal('兴业银行·“绿色大宗”汽车以旧换新贷款', '兴业绿色信贷')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition shadow-sm hover:scale-[1.03]">申请绿色通道</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section class="mt-16 pt-6 border-t border-gray-200">
-            <p class="text-center text-[11px] font-bold tracking-widest text-gray-400 uppercase mb-4">联合直连清算与合规审计机构</p>
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 items-center justify-items-center opacity-40 grayscale hover:opacity-70 transition duration-300">
-                <div class="text-xs font-bold font-sans text-slate-700 flex items-center gap-1"><i class="fas fa-building-columns"></i> 中国工商银行</div>
-                <div class="text-xs font-bold font-sans text-slate-700 flex items-center gap-1"><i class="fas fa-shield-halved"></i> 中国平安财产险</div>
-                <div class="text-xs font-bold font-sans text-slate-700 flex items-center gap-1"><i class="fas fa-money-check-dollar"></i> 兴业银行绿色金融</div>
-                <div class="text-xs font-bold font-sans text-slate-700 flex items-center gap-1"><i class="fas fa-landmark-flag"></i> 渤海银行总行</div>
-                <div class="text-xs font-bold font-sans text-slate-700 flex items-center gap-1"><i class="fas fa-network-wired"></i> 宇信科技前置网关</div>
-            </div>
-        </section>
-    </main>
-
-    <div id="biz-apply-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-xs">
-        <div class="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-gray-100 transition-all transform">
-            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
+            
+            <div onclick="triggerDocumentDownload('广发银行·车秒贷个人风控准入细则.pdf')" class="bg-white border border-slate-200 p-4 rounded-xl flex items-start space-x-3 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <span class="text-purple-600 text-lg mt-0.5 group-hover:scale-110 transition-transform"><i class="fas fa-file-pdf"></i></span>
                 <div>
-                    <h3 class="text-sm font-bold flex items-center gap-2"><i class="fas fa-file-invoice-dollar text-blue-400"></i> 合作行/保司业务系统直连申请</h3>
-                    <p class="text-[11px] text-slate-400 mt-0.5" id="modal-product-sub">已进入银企直连安全流转状态</p>
+                    <h5 class="text-xs font-black text-slate-900">广发银行·车秒贷个人风控准入细则.pdf</h5>
+                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">划定直连12123公共安全网络的个人隐私特征脱敏校验红线与反馈耗时指标。</p>
                 </div>
-                <button onclick="closeApplyModal()" class="text-slate-400 hover:text-white text-lg transition"><i class="fas fa-times"></i></button>
             </div>
-            <form class="p-6 space-y-4" onsubmit="handleFormSubmit(event)">
+            
+            <div onclick="triggerDocumentDownload('中国平安·新能源三电特定核保白皮书.pdf')" class="bg-white border border-slate-200 p-4 rounded-xl flex items-start space-x-3 hover:bg-slate-50 transition-colors cursor-pointer group">
+                <span class="text-emerald-600 text-lg mt-0.5 group-hover:scale-110 transition-transform"><i class="fas fa-file-pdf"></i></span>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">拟办产品名称</label>
-                    <input type="text" id="modal-product-name" readonly class="w-full bg-gray-100 border border-gray-200 text-gray-600 rounded-xl p-2.5 text-xs font-bold focus:outline-none">
+                    <h5 class="text-xs font-black text-slate-900">中国平安·新能源三电特定核保白皮书.pdf</h5>
+                    <p class="text-[10px] text-slate-400 mt-1 leading-relaxed">指导如何凭平台第三方车况凭证SOH直免线下免拆检验核心动力电池组方案。</p>
                 </div>
-                <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
-                    <label class="block text-[11px] font-semibold text-blue-900 mb-1">✨ 车辆凭证编码自动识别关联（宇信技术前置）</label>
-                    <div class="flex gap-2">
-                        <input type="text" id="token-input" placeholder="请输入报告单编号 或 商户统一社会信用代码" class="flex-1 border border-gray-300 rounded-lg p-2 text-[11px] bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
-                        <button type="button" onclick="verifyToken()" class="bg-blue-600 hover:bg-blue-700 text-white text-[11px] px-3 rounded-lg font-medium tracking-wide shrink-0 transition shadow-xs">智能核验</button>
-                    </div>
-                    <div id="verify-feedback-card" class="hidden mt-2 p-2 bg-emerald-50 border border-emerald-200 rounded-lg text-[10px] text-emerald-800 flex items-center gap-1.5">
-                        <i class="fas fa-car text-xs"></i>
-                        <span>已调取脱敏档案：<strong id="feedback-car-model">2023款 纯电SUV (中国平安SOH核定值: 94%)</strong></span>
-                    </div>
-                    <p id="verify-status" class="text-[10px] text-gray-400 mt-1 font-medium"><i class="fas fa-circle-question mr-1"></i>绑定后可免除商业银行线下反复反洗钱及风控审查</p>
+            </div>
+            
+        </div>
+        
+        <div class="bg-gradient-to-br from-slate-900 to-slate-950 text-white p-5 rounded-xl flex flex-col justify-between border border-slate-800 shadow-xl relative overflow-hidden">
+            <div class="space-y-2">
+                <h4 class="text-xs font-black flex items-center tracking-wider uppercase"><i class="fas fa-box-archive text-amber-400 mr-2"></i>联合政策数据接入全套指引包</h4>
+                <p class="text-[11px] text-slate-400 leading-relaxed">包含由各核心金融、保险主体共同联签发文的底层脱敏授权、数据合规流通、银企联算规约文件全集。</p>
+            </div>
+            <button onclick="triggerDocumentDownload('CIECC金融保险超市全套指引大礼包.zip')" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-slate-950 text-xs font-bold py-3 rounded-xl transition-all shadow-md mt-4 active:scale-[0.98]">
+                立即一键打包下载全集 (.Zip)
+            </button>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 border-t border-slate-200 text-slate-400 text-xs">
+        <p class="text-center font-bold tracking-widest text-slate-400 uppercase mb-4 text-[10px]">生产级联合直连结算与安全审计核心机构</p>
+        <div class="flex flex-wrap justify-center items-center gap-x-8 gap-y-3 font-semibold text-slate-400/80 text-[11px]">
+            <span class="flex items-center"><i class="fas fa-building-columns mr-1.5 text-slate-300"></i>中国工商银行总行</span>
+            <span class="flex items-center"><i class="fas fa-shield-halved mr-1.5 text-slate-300"></i>中国平安财产保险股份有限公司总公司</span>
+            <span class="flex items-center"><i class="fas fa-leaf mr-1.5 text-slate-300"></i>兴业银行绿色金融总部</span>
+            <span class="flex items-center"><i class="fas fa-building mr-1.5 text-slate-300"></i>渤海银行总行资金清算中心</span>
+            <span class="flex items-center"><i class="fas fa-network-wired mr-1.5 text-slate-300"></i>宇信科技高并发安全前置网关</span>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 pb-16">
+        <div class="bg-slate-100 p-5 rounded-2xl border border-slate-200 text-slate-500 text-[11px] space-y-2.5 leading-relaxed">
+            <p class="font-bold text-slate-800 flex items-center"><i class="fas fa-scale-balanced text-amber-500 mr-2"></i>生产环境隐私确权与金融反洗钱内控合规审计声明：</p>
+            <p>本线上智能超市列示的所有汽车流通金融、商户库存贴息周转贷及新能源电池三电专属保障产品，其底层数据路由、征信测额交互均置于<span class="text-slate-900 font-bold">中国国际电子商务中心（CIECC）官方监管审计闭环</span>内。全链路接口均经过国密算法加密、多方数据脱敏存证，完全符合国家金融机构反洗钱内控标准，充分保障市场主体企业及个人数据的所有权与隐私权不受侵害。</p>
+        </div>
+    </div>
+
+    <div id="modal-apply-gateway" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden border border-slate-200 transform scale-95 transition-all duration-300" id="modal-apply-content">
+            <div class="bg-slate-950 text-white p-4 flex justify-between items-center">
+                <h3 class="text-xs font-black flex items-center tracking-wider"><i class="fas fa-key text-amber-500 mr-2"></i>加密安全信托申领端点</h3>
+                <button onclick="closeExecutionModal()" class="text-slate-400 hover:text-white transition-colors"><i class="fas fa-xmark text-sm"></i></button>
+            </div>
+            <form onsubmit="handleModalFormSubmit(event)" class="p-6 space-y-4">
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-xs flex flex-col space-y-1">
+                    <span class="text-slate-400 font-medium">拟投递匹配产品端点:</span>
+                    <span id="lbl-modal-product-name" class="font-bold text-blue-600"></span>
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">联系人真实姓名 <span class="text-red-500">*</span></label>
-                        <input type="text" required class="w-full border border-gray-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">联系电话 <span class="text-red-500">*</span></label>
-                        <input type="tel" required class="w-full border border-gray-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">授权经办人真实姓名</label>
+                    <input type="text" required class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-blue-600 transition-all" placeholder="请输入真实经办人身份信息">
                 </div>
-                <div class="bg-gray-50 rounded-xl p-3 border border-gray-200 text-[11px] text-slate-500 flex items-start">
-                    <input id="compliance-check" required type="checkbox" class="mt-0.5 h-3.5 w-3.5 text-blue-600 border-gray-300 rounded-sm">
-                    <label for="compliance-check" class="ml-2 leading-relaxed">本人已全面阅读同意并接受合作银行及中国平安保险官方的 <a href="#" class="text-blue-600 underline">《数据授权与隐私流转协议》</a>。</label>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-600 mb-1">预留法定代表人手机号</label>
+                    <input type="tel" required class="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-blue-600 transition-all font-mono" placeholder="接收合作金融/保司风控动态网签码">
                 </div>
-                <div class="flex gap-3 pt-1">
-                    <button type="button" onclick="closeApplyModal()" class="flex-1 bg-gray-100 text-gray-600 text-xs font-medium py-2.5 rounded-xl transition hover:bg-gray-200">取消</button>
-                    <button type="submit" class="flex-1 bg-blue-600 text-white text-xs font-bold py-2.5 rounded-xl shadow-md transition hover:bg-blue-700">提交至行方审批</button>
+                <div class="text-[10px] text-slate-400 leading-relaxed bg-amber-50/50 p-2.5 rounded-lg border border-amber-100 text-amber-800">
+                    <i class="fas fa-circle-info mr-1"></i>递交即代表已详细阅读并完全同意《隐私信息脱敏流转与联合授权协议》，数据将被打包发至对应节点。
+                </div>
+                <div class="pt-3 border-t border-slate-100 flex justify-end space-x-2 text-xs">
+                    <button type="button" onclick="closeExecutionModal()" class="px-4 py-2 bg-slate-100 text-slate-600 font-bold rounded-lg hover:bg-slate-200 transition-all">关闭返回</button>
+                    <button type="submit" class="px-5 py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition-all shadow-md">授权国密递交</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="embed-code-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl p-6 border border-gray-100">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xs font-bold text-slate-900"><i class="fas fa-terminal mr-1 text-blue-600"></i> 获取原子内嵌代码</h3>
-                <button onclick="closeEmbedModal()" class="text-gray-400 hover:text-gray-600"><i class="fas fa-times"></i></button>
+    <div id="modal-component-gateway" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
+            <div class="bg-slate-950 text-white p-4 flex justify-between items-center">
+                <h3 class="text-xs font-black flex items-center tracking-wider"><i class="fas fa-cube text-blue-400 mr-2"></i>跨系统嵌入式原子组件中心</h3>
+                <button onclick="toggleComponentModal()" class="text-slate-400 hover:text-white transition-colors"><i class="fas fa-xmark text-sm"></i></button>
             </div>
-            <p class="text-[11px] text-gray-500 mb-3">支持将该联合金融超市原子组件无缝内嵌至各省政务公共端或车商ERP管理中。</p>
-            <textarea readonly class="w-full bg-slate-950 text-emerald-400 p-3 rounded-xl font-mono text-[10px] h-24 focus:outline-none border border-slate-800 shadow-inner">&lt;iframe src="https://ciecc.gov.cn/auto-market-supermarket/atom" width="100%" height="600px" frameborder="0" scrolling="no"&gt;&lt;/iframe&gt;</textarea>
-            <button onclick="copyEmbedCode()" class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2.5 rounded-xl transition shadow-md">复制代码片段</button>
+            <div class="p-6 space-y-4">
+                <p class="text-xs text-slate-500 leading-relaxed">工业级跨多平台复用方案：复制下方标准符合安全策略的 iframe 组件代码，即可直接无缝将本超市嵌入您的内部运营系统或区域性商户后台中。</p>
+                <div class="relative">
+                    <textarea readonly id="txt-iframe-code" rows="4" class="w-full bg-slate-950 text-slate-300 p-4 rounded-xl text-xs font-mono border border-slate-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50 leading-relaxed no-scrollbar">&lt;iframe src="https://finance.ciecc-usedcar.com/supermarket/embed" width="100%" height="800px" frameborder="0" sandbox="allow-scripts allow-same-origin allow-forms" style="border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08);"&gt;&lt;/iframe&gt;</textarea>
+                    <button onclick="copyEmbedCode()" class="absolute right-3 bottom-3 bg-blue-600 hover:bg-blue-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow transition-all active:scale-[0.96]">
+                        <i class="fas fa-copy mr-1"></i>复制嵌入代码
+                    </button>
+                </div>
+                <div class="text-[10px] text-slate-400">
+                    * 生产沙箱权限说明：请确保内嵌宿主域名已在CIECC前置网关进行白名单备案（IP白名单/跨域CORS头核验）。
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col bg-white border border-gray-200 rounded-l-2xl shadow-2xl transition-all duration-300 hover:-translate-x-1 w-24 overflow-hidden">
-        <button onclick="openFloatBizModal('institution')" class="flex flex-col items-center justify-center py-4 border-b border-gray-100 hover:bg-slate-50 transition group">
-            <div class="text-blue-600 text-lg mb-1.5 transition-transform group-hover:-translate-y-0.5">
-                <i class="fas fa-upload"></i>
-            </div>
-            <span class="text-[11px] font-medium text-slate-700 tracking-tight text-center px-1 leading-tight">机构产品上架</span>
-        </button>
-        <button onclick="openFloatBizModal('province')" class="flex flex-col items-center justify-center py-4 hover:bg-slate-50 transition group">
-            <div class="text-emerald-600 text-xl mb-1.5 transition-transform group-hover:scale-105">
-                <i class="fas fa-handshake"></i>
-            </div>
-            <span class="text-[11px] font-medium text-slate-700 tracking-tight text-center px-1 leading-tight">渠道大省合作</span>
-        </button>
-    </div>
-
-    <div id="float-biz-modal" class="hidden fixed inset-0 bg-slate-900 bg-opacity-60 flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-gray-100">
-            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
-                <div>
-                    <h3 class="text-sm font-bold flex items-center gap-2" id="float-modal-title">
-                        <i class="fas fa-shield-halved"></i> 银行/保司/大省专属对接通道
-                    </h3>
-                    <p class="text-[10px] text-slate-400 mt-0.5">中国国际电子商务中心流通数据治理沙盒环境保护</p>
-                </div>
-                <button onclick="closeFloatBizModal()" class="text-slate-400 hover:text-white text-lg"><i class="fas fa-times"></i></button>
-            </div>
-            <form class="p-6 space-y-4" onsubmit="handleFloatSubmit(event)">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-700 mb-1">合作主体分类</label>
-                    <input type="text" id="float-modal-type" readonly class="w-full bg-gray-100 border border-gray-200 text-gray-600 rounded-xl p-2.5 text-xs font-bold focus:outline-none">
-                </div>
-                <div class="grid grid-cols-1 gap-3">
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">机构全称 / 协作行政省区名称 <span class="text-red-500">*</span></label>
-                        <input type="text" placeholder="例如：某商业银行总行 / 某省汽车流通协会合作渠道" required class="w-full border border-gray-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">核心商务/区域专员姓名 <span class="text-red-500">*</span></label>
-                        <input type="text" required class="w-full border border-gray-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-gray-700 mb-1">官方有效联络电话 <span class="text-red-500">*</span></label>
-                        <input type="tel" required class="w-full border border-gray-200 rounded-xl p-2 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500">
-                    </div>
-                </div>
-                <div class="bg-blue-50 rounded-xl p-3 border border-blue-100 text-[11px] text-blue-800 leading-relaxed">
-                    <i class="fas fa-info-circle mr-1"></i> <strong>商务处理提效提示：</strong> 提交申请后，系统将即时向部委平台运营部及对应大区负责人下发待办审计包，专业人员将在15分钟内与您进行合规联络。
-                </div>
-                <div class="flex gap-3 pt-1">
-                    <button type="button" onclick="closeFloatBizModal()" class="flex-1 bg-gray-100 text-gray-600 text-xs font-medium py-2 rounded-xl">暂缓沟通</button>
-                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 rounded-xl shadow-md transition">立即提交申请</button>
-                </div>
-            </form>
+    <div class="fixed right-4 top-1/2 transform -translate-y-1/2 z-40 hidden sm:flex flex-col space-y-2 text-[10px] font-bold text-slate-600">
+        <div class="bg-white border border-slate-200/80 p-2.5 rounded-2xl shadow-2xl flex flex-col items-center space-y-3.5 backdrop-blur-sm">
+            <button onclick="alert('即将拉起金融机构入驻工作流，请准备好金融许可证与前置专线对接公钥。')" class="hover:text-blue-600 transition-colors flex flex-col items-center space-y-1 group">
+                <i class="fas fa-cloud-arrow-up text-xs text-slate-400 group-hover:text-blue-500 transition-colors"></i><span>机构入驻</span>
+            </button>
+            <div class="w-4 border-t border-slate-100"></div>
+            <button onclick="alert('平台全国大省合作渠道经理热线：400-XXX-XXXX，请准备商务合伙资质。')" class="hover:text-blue-600 transition-colors flex flex-col items-center space-y-1 group">
+                <i class="fas fa-handshake text-xs text-slate-400 group-hover:text-blue-500 transition-colors"></i><span>大省渠道</span>
+            </button>
         </div>
     </div>
 
-    <div class="bg-gray-100 border-t border-gray-200 py-6 px-6 mt-16">
-        <div class="max-w-7xl mx-auto text-[11px] text-slate-400 leading-relaxed space-y-2.5">
-            <p class="font-semibold text-slate-500"><i class="fas fa-triangle-exclamation mr-1"></i> 生产环境合规与内控审计体系声明：</p>
-            <p>本线上超市所陈列的所有车商贷、库存融资、消费分期产品及个人车险延保，均统一运行在中国国际电子商务中心官方审计监控架构下，底层技术接口与清结算框架由工商银行、兴业银行、广发银行、渤海银行及中国平安保险共同校验提供，确保底层公共数据资产流转合规、安全。</p>
+    <footer class="bg-slate-950 text-slate-500 py-8 px-4 text-center text-[11px] border-t border-slate-900 tracking-wider">
+        <div class="max-w-7xl mx-auto space-y-2">
+            <p>运营主体单位：中国国际电子商务有限公司 | 全链路技术底座支持：中国银行保险信息技术管理有限公司</p>
+            <p>© 2026 二手车流通综合平台版权所有. All Rights Reserved. 生产节点运行版本 v1.12.4</p>
         </div>
-    </div>
-
-    <footer class="bg-slate-900 text-slate-400 py-6 text-xs border-t border-slate-800 text-center space-y-2">
-        <p class="font-medium text-slate-300">运营主体单位：中国国际电子商务有限公司 | 技术数据支持：中国银行保险信息技术管理有限公司</p>
-        <p class="text-slate-600">&copy; 2026 二手车信息服务平台. All Rights Reserved.</p>
     </footer>
 
     <script>
-        let currentFilters = { main: 'all', source: 'all', scene: 'all' };
-        let currentEngineType = 'B';
+        // 全局动态过滤器状态机
+        let currentTargetFilter = 'all';
+        let currentOrgFilter = 'all';
+        let currentCycleFilter = 'all';
 
-        function switchEngineType(type) {
-            currentEngineType = type;
-            const btnB = document.getElementById('engine-btn-B');
-            const btnC = document.getElementById('engine-btn-C');
-            const slider = document.getElementById('engine-slider-block');
-            const input = document.getElementById('engine-id-input');
-            const banner = document.getElementById('main-banner');
-            const bannerTitle = document.getElementById('banner-dynamic-title');
-            const bannerDesc = document.getElementById('banner-dynamic-desc');
-            
-            document.getElementById('input-error-tip').classList.add('hidden');
-            input.value = '';
+        /**
+         * 智能控制前置网关的角色模态与视觉色域切换
+         */
+        function toggleGatewayMode(mode) {
+            const banner = document.getElementById('hero-banner');
+            const tabA = document.getElementById('tab-mode-a');
+            const tabB = document.getElementById('tab-mode-b');
+            const formContainer = document.getElementById('form-container');
+            const coreInput = document.getElementById('input-core-credential');
+            const iconMain = document.getElementById('input-icon-main');
 
-            if(type === 'B') {
-                slider.style.left = '4px';
-                btnB.className = "relative py-2 text-xs font-bold rounded-xl text-blue-900 z-10 transition-colors duration-300";
-                btnC.className = "relative py-2 text-xs font-bold rounded-xl text-blue-100 opacity-80 z-10 transition-colors duration-300";
-                input.placeholder = "请输入企业统一社会信用代码";
+            if (mode === 'B') {
                 banner.classList.add('theme-b');
-                bannerTitle.innerText = "库存融资在线秒批，车贷车险一键触达！";
-                bannerDesc.innerText = "买车卖车，一个超市全搞定！直连主流合作银行与各大保险巨头，全线打通汽车金融与保险链路。车商端一键申请巨额库存授信，车主端即刻尊享低息分期与官方车险直通车。融资快、贷款稳、投保省、出单高，全链路赋能汽车交易新体验！";
+                tabB.className = "flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md";
+                tabA.className = "flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+                coreInput.placeholder = "请输入车主身份证号或车辆识别代码(VIN码)";
+                iconMain.className = "fas fa-id-card text-slate-400";
             } else {
-                slider.style.left = 'calc(50% - 0px)';
-                btnC.className = "relative py-2 text-xs font-bold rounded-xl text-blue-900 z-10 transition-colors duration-300";
-                btnB.className = "relative py-2 text-xs font-bold rounded-xl text-blue-100 opacity-80 z-10 transition-colors duration-300";
-                input.placeholder = "请输入车主个人身份证号";
                 banner.classList.remove('theme-b');
-                bannerTitle.innerText = "库存融资在线秒批，车贷车险一键触达！";
-                bannerDesc.innerText = "买车卖车，一个超市全搞定！直连主流合作银行与各大保险巨头，全线打通汽车金融与保险链路。车商端一键申请巨额库存授信，车主端即刻尊享低息分期与官方车险直通车。融资快、贷款稳、投保省、出单高，全链路赋能汽车交易新体验！";
+                tabA.className = "flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 shadow-md";
+                tabB.className = "flex-1 text-center py-2.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white";
+                coreInput.placeholder = "请输入企业统一社会信用代码";
+                iconMain.className = "fas fa-building text-slate-400";
             }
         }
 
-        function runRiskEngine() {
-            const inputVal = document.getElementById('engine-id-input').value.trim();
-            const errorTip = document.getElementById('input-error-tip');
-            const submitBtn = document.getElementById('engine-submit-btn');
-            
-            if(!inputVal) { 
-                showErrorTip("提示：请输入编码凭证！");
-                return; 
-            }
+        /**
+         * 前置网络测额防御性骨架加载交互
+         */
+        function triggerNetworkVerification() {
+            const credential = document.getElementById('input-core-credential').value;
+            const token = document.getElementById('input-token-credential').value;
 
-            if(inputVal.length !== 18) {
-                showErrorTip(`提示：请输入合法的18位${currentEngineType === 'B' ? '统一社会信用代码' : '个人身份证号'}！`);
+            if(!credential || !token) {
+                alert('工业前置网关红线提示：凭证信用代码与平台车况报告单编码均属于必填项，不可为空！');
                 return;
             }
 
-            errorTip.classList.add('hidden');
-            submitBtn.disabled = true;
-            document.getElementById('engine-form-zone').classList.add('hidden');
-            document.getElementById('engine-loading-zone').classList.remove('hidden');
-            
-            setTimeout(() => { document.getElementById('engine-loading-txt').innerText = "生成宇信科技前置标准化授信特征因子包..."; }, 1000);
+            const feedbackPanel = document.getElementById('gateway-feedback-panel');
+            const loader = document.getElementById('gateway-loader');
+            const realData = document.getElementById('gateway-real-data');
+            const statusText = document.getElementById('txt-feedback-status');
+            const detailText = document.getElementById('txt-feedback-detail');
+            const auditText = document.getElementById('txt-feedback-audit');
+
+            // 展示面板，拉起骨架屏
+            feedbackPanel.classList.remove('hidden');
+            loader.classList.remove('hidden');
+            realData.classList.add('hidden');
+
+            // 模拟高并发网关0.4秒延迟响应
             setTimeout(() => {
-                document.getElementById('engine-loading-zone').classList.add('hidden');
-                document.getElementById('engine-result-zone').classList.remove('hidden');
-                submitBtn.disabled = false;
+                loader.classList.add('hidden');
+                realData.classList.remove('hidden');
+
+                // 时间戳与流水存证哈希生成
+                const randomHash = '0x' + Array.from({length:16}, () => Math.floor(Math.random()*16).toString(16)).join('');
                 
-                const resultDesc = document.getElementById('engine-result-desc');
-                resultDesc.innerText = currentEngineType === 'B' 
-                    ? "商业银行企业预审模型匹配成功。已为您锁定：渤海银行‘订单式库存融资贷’超低息定向通道，请去下方页面查看。"
-                    : "个人授信画像前置通过。已激活：广发银行‘车秒贷’专属低利息优惠包与中国平安三电险直减权益。";
-                
-                document.getElementById('risk-engine-panel').scrollIntoView({ behavior: 'smooth' });
-            }, 2000);
-        }
-
-        function showErrorTip(msg) {
-            const errorTip = document.getElementById('input-error-tip');
-            errorTip.innerText = msg;
-            errorTip.classList.remove('hidden');
-            setTimeout(() => { errorTip.classList.add('hidden'); }, 4000);
-        }
-
-        function resetRiskEngine() {
-            document.getElementById('engine-id-input').value = '';
-            document.getElementById('engine-result-zone').classList.add('hidden');
-            document.getElementById('input-error-tip').classList.add('hidden');
-            document.getElementById('engine-loading-zone').classList.add('hidden');
-            document.getElementById('engine-form-zone').classList.remove('hidden');
-            executeCombinedFilter();
-        }
-
-        function highlightPremiumProducts() {
-            if(currentEngineType === 'B') { filterMain('b-side'); document.getElementById('search-input').value = '渤海银行'; }
-            else { filterMain('c-side'); document.getElementById('search-input').value = '广发'; }
-            executeCombinedFilter();
-        }
-
-        function filterMain(role) {
-            currentFilters.main = role;
-            ['all', 'b-side', 'c-side'].forEach(t => {
-                document.getElementById('tab-' + t).className = (t === role) 
-                    ? "flex-1 md:flex-none px-5 py-2 text-xs font-bold rounded-lg bg-white text-blue-600 shadow-xs transition"
-                    : "flex-1 md:flex-none px-5 py-2 text-xs font-bold rounded-lg text-gray-600 hover:text-gray-900 transition";
-            });
-            executeCombinedFilter();
-        }
-
-        function filterSub(type, value, element) {
-            currentFilters[type] = value;
-            var activeClass = (type === 'source') ? 'sub-src-btn' : 'sub-scn-btn';
-            var siblings = element.parentNode.querySelectorAll('button');
-            
-            siblings.forEach(function(btn) {
-                btn.className = activeClass + ' px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition';
-                btn.innerHTML = btn.innerText;
-            });
-            
-            element.className = activeClass + ' px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 font-semibold shadow-xs flex items-center gap-1';
-            element.innerHTML = element.innerText + '<i class="fas fa-check text-[9px]"></i>';
-            
-            executeCombinedFilter();
-        }
-
-        function resetAllFilters() {
-            currentFilters = { main: 'all', source: 'all', scene: 'all' };
-            document.getElementById('search-input').value = '';
-            filterMain('all');
-            
-            document.querySelectorAll('.sub-src-btn, .sub-scn-btn').forEach(btn => {
-                if (btn.innerText.trim() === '不限') {
-                    btn.className = btn.classList.contains('sub-src-btn') ? 'sub-src-btn px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 font-semibold shadow-xs flex items-center gap-1' : 'sub-scn-btn px-3 py-1.5 rounded-md bg-blue-50 text-blue-700 font-semibold shadow-xs flex items-center gap-1';
-                    btn.innerHTML = '不限<i class="fas fa-check text-[9px]"></i>';
+                if(token.length >= 8) {
+                    statusText.innerText = "【企业画像连接成功】：触发合规增信加成";
+                    detailText.innerText = "匹配主体：某大型百强流通汽车交易市场 (信用评价评级: A级，已获得汽车电商技能培训加成贴息包资格)";
+                    auditText.innerText = `BLOCK-HASH: ${randomHash.toUpperCase()} | 生产合规已存证`;
                 } else {
-                    btn.className = btn.classList.contains('sub-src-btn') ? 'sub-src-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition' : 'sub-scn-btn px-3 py-1.5 rounded-md bg-gray-100 text-gray-600 hover:bg-gray-200 transition';
-                    btn.innerHTML = btn.innerText;
+                    statusText.innerText = "【标的资产确权成功】：多方信托接入通过";
+                    detailText.innerText = "匹配资产：2023款 纯电智能SUV (中国平安产险实时核定核心三电SOH健康度: 94% / 12123无查封诉讼)";
+                    auditText.innerText = `BLOCK-HASH: ${randomHash.toUpperCase()} | 数据安全审计闭环`;
                 }
-            });
-            executeCombinedFilter();
+            }, 800);
         }
 
-        function executeCombinedFilter() {
-            const items = document.querySelectorAll('.product-item');
-            let fCount = 0, iCount = 0;
-            const keyword = document.getElementById('search-input').value.trim().toLowerCase();
-
-            items.forEach(item => {
-                let m = (currentFilters.main === 'all') || item.classList.contains(currentFilters.main);
-                let s = (currentFilters.source === 'all') || item.classList.contains(currentFilters.source);
-                let c = (currentFilters.scene === 'all') || item.classList.contains(currentFilters.scene);
-                let k = item.getAttribute('data-title').toLowerCase().includes(keyword);
-
-                if (m && s && c && k) {
-                    item.style.display = 'flex';
-                    if (item.closest('#sec-finance')) fCount++;
-                    if (item.closest('#sec-insurance')) iCount++;
-                } else { item.style.display = 'none'; }
-            });
-
-            document.getElementById('sec-finance').style.display = fCount > 0 ? 'block' : 'none';
-            document.getElementById('sec-insurance').style.display = iCount > 0 ? 'block' : 'none';
-            document.getElementById('no-data-block').style.display = (fCount === 0 && iCount === 0) ? 'block' : 'none';
+        /**
+         * 跨平台原子组件内嵌弹窗控制
+         */
+        function toggleComponentModal() {
+            const modal = document.getElementById('modal-component-gateway');
+            modal.classList.toggle('hidden');
         }
 
-        function searchProducts() { executeCombinedFilter(); }
-        function openApplyModal(name, type) {
-            document.getElementById('modal-product-name').value = name;
-            document.getElementById('modal-product-sub').innerText = `已启用商业银行直连业务 · 主管行/保司线：${type}`;
-            document.getElementById('verify-feedback-card').classList.add('hidden');
-            document.getElementById('token-input').value = '';
-            document.getElementById('biz-apply-modal').classList.remove('hidden');
+        function copyEmbedCode() {
+            const copyText = document.getElementById('txt-iframe-code');
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            alert('嵌入式 iframe 原子组件源码已成功复制至剪贴板，可直接粘贴于内部系统！');
         }
-        function closeApplyModal() { document.getElementById('biz-apply-modal').classList.add('hidden'); }
-        
-        function openFloatBizModal(bizType) {
-            const modal = document.getElementById('float-biz-modal');
-            const title = document.getElementById('float-modal-title');
-            const typeInput = document.getElementById('float-modal-type');
-            
-            if (bizType === 'institution') {
-                title.innerHTML = '<i class="fas fa-upload text-blue-400"></i> 主流商业银行 / brand保险产品快捷入驻申请';
-                typeInput.value = '持牌商业银行总行 / 大型产险公司核心运营团队';
-            } else if (bizType === 'province') {
-                title.innerHTML = '<i class="fas fa-handshake text-emerald-400"></i> 各省区大宗流通协会 / 区域公共核心市场共建协同';
-                typeInput.value = '大省汽车流通协会 / 各属地核心二手车有形市场运营方';
-            }
+
+        /**
+         * 生产流转模态框控制引擎
+         */
+        function openExecutionModal(productName) {
+            document.getElementById('lbl-modal-product-name').innerText = productName;
+            const modal = document.getElementById('modal-apply-gateway');
+            const content = document.getElementById('modal-apply-content');
             modal.classList.remove('hidden');
+            setTimeout(() => { content.classList.remove('scale-95'); }, 20);
         }
-        function closeFloatBizModal() { document.getElementById('float-biz-modal').classList.add('hidden'); }
-        function handleFloatSubmit(event) {
+
+        function closeExecutionModal() {
+            const modal = document.getElementById('modal-apply-gateway');
+            modal.classList.add('hidden');
+        }
+
+        /**
+         * 模拟白皮书合规下载流
+         */
+        function triggerDocumentDownload(fileName) {
+            alert(`【数据确权审计】：您正在申请下载《${fileName}》。系统已对您的经办凭证进行了脱敏水印加密，下载包准备就绪。`);
+        }
+
+        /**
+         * 表单联合提交统一拦截处理
+         */
+        function handleMainFormSubmit(event) {
             event.preventDefault();
-            alert('商务合作意向已合规备案。底层数据沙盒正在流转，对应行政省区及行保运营负责人将迅速建立安全联络通道。');
-            closeFloatBizModal();
+            alert('前置端点通知：本笔大宗汽车流通测额数据已打包，直达合作行/保司生产节点审批队列，秒级回调预额度。');
         }
 
-        function openEmbedModal() { document.getElementById('embed-code-modal').classList.remove('hidden'); }
-        function closeEmbedModal() { document.getElementById('embed-code-modal').classList.add('hidden'); }
-        function copyEmbedCode() { alert("内嵌原子片段代码已复制至您的剪贴板。"); closeEmbedModal(); }
+        function handleModalFormSubmit(event) {
+            event.preventDefault();
+            alert('授权签署并投递成功！平台流水审计号已下发至用法定代表人手机号，请注意查收终审判定通知。');
+            closeExecutionModal();
+        }
 
-        function verifyToken() {
-            const token = document.getElementById('token-input').value.trim();
-            if(!token) return;
-            
-            const statusEl = document.getElementById('verify-status');
-            statusEl.className = "text-[10px] text-blue-600 mt-1 font-bold animate-pulse";
-            statusEl.innerHTML = '<i class="fas fa-spinner animate-spin mr-1"></i>宇信前置网关正在接入底层商业银行征信核验系统...';
+        /**
+         * 核心高阶多维筛选过滤控制内核（全网格实时联动渲染）
+         */
+        function filterProducts(target, element) {
+            currentTargetFilter = target;
+            // 切换 Tab 按钮高亮样式
+            document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+                btn.className = "filter-tab-btn text-slate-500 hover:text-slate-800 px-4 py-1.5 rounded-lg text-xs font-bold transition-all";
+            });
+            element.className = "filter-tab-btn bg-white text-slate-900 shadow-sm px-4 py-1.5 rounded-lg text-xs font-bold transition-all";
+            executeCombinedFilter();
+        }
 
-            setTimeout(() => {
-                statusEl.className = "text-[10px] text-emerald-600 mt-1 font-bold";
-                statusEl.innerHTML = '<i class="fas fa-circle-check mr-1"></i>【银行预审数据导入通过】：免除线下纸质反复审查';
+        function filterOrg(org, element) {
+            currentOrgFilter = org;
+            document.querySelectorAll('.org-tag-btn').forEach(btn => {
+                btn.className = "org-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100";
+            });
+            element.className = "org-tag-btn bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold text-[11px]";
+            executeCombinedFilter();
+        }
+
+        function filterCycle(cycle, element) {
+            currentCycleFilter = cycle;
+            document.querySelectorAll('.cycle-tag-btn').forEach(btn => {
+                btn.className = "cycle-tag-btn bg-slate-50 text-slate-600 px-3 py-1 rounded-md font-medium text-[11px] hover:bg-slate-100";
+            });
+            element.className = "cycle-tag-btn bg-blue-50 text-blue-600 px-3 py-1 rounded-md font-bold text-[11px]";
+            executeCombinedFilter();
+        }
+
+        function executeLiveSearch() {
+            executeCombinedFilter();
+        }
+
+        /**
+         * 联合过滤矩阵算法引擎
+         */
+        function executeCombinedFilter() {
+            const searchVal = document.getElementById('search-input').value.toLowerCase().trim();
+            const cards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+
+            cards.forEach(card => {
+                const matchesTarget = (currentTargetFilter === 'all' || card.getAttribute('data-target') === currentTargetFilter);
+                const matchesOrg = (currentOrgFilter === 'all' || card.getAttribute('data-org') === currentOrgFilter);
+                const matchesCycle = (currentCycleFilter === 'all' || card.getAttribute('data-cycle') === currentCycleFilter);
                 
-                const feedbackCard = document.getElementById('verify-feedback-card');
-                const modelName = document.getElementById('feedback-car-model');
-                
-                if(token.length > 10) {
-                    modelName.innerText = "商户核验：某大型百强二手车交易市场 (中国工商银行合作商户)";
+                const cardTitle = card.querySelector('.search-title').innerText.toLowerCase();
+                const matchesSearch = (!searchVal || cardTitle.includes(searchVal));
+
+                if (matchesTarget && matchesOrg && matchesCycle && matchesSearch) {
+                    card.classList.remove('hidden');
+                    visibleCount++;
                 } else {
-                    modelName.innerText = "资产锚定：2023款 纯电SUV (中国平安产险核定SOH健康度: 94%)";
+                    card.classList.add('hidden');
                 }
-                feedbackCard.classList.remove('hidden');
-            }, 1200);
-        }
+            });
 
-        function handleFormSubmit(event) {
-            event.preventDefault();
-            alert('申请受理成功！本单核心数据已通过宇信前置加密流转至对应行/保司生产环境审批节点，秒级下发预审结果。');
-            closeApplyModal();
-        }
-
-        const broadcasts = [
-            "安徽某商户 凭借车况单成功匹配渤海银行库存融资 120 万元 (5分钟前)",
-            "车主李*强 通过隐私画像解锁中国平安新能源延保特惠，保费直降 450 元 (2分钟前)",
-            "广东某大型车商 一键导入信用凭证，尊享工商银行 8.5 折降息包 (刚刚)",
-            "车牌沪A**** 个人车主成功办理兴业银行以旧换新绿色贷款，专享 5000 元置换贴息 (10分钟前)"
-        ];
-        let bIdx = 0;
-        setInterval(() => {
-            const el = document.getElementById('rolling-broadcast');
-            if(el) {
-                el.style.opacity = 0;
-                setTimeout(() => { bIdx = (bIdx + 1) % broadcasts.length; el.innerText = broadcasts[bIdx]; el.style.opacity = 1; }, 500);
+            const fallbackCard = document.getElementById('search-fallback-card');
+            if (visibleCount === 0) {
+                fallbackCard.classList.remove('hidden');
+            } else {
+                fallbackCard.classList.add('hidden');
             }
+        }
+
+        /**
+         * 工业级大盘跑马灯轮播模块
+         */
+        const broadcastLines = [
+            "安徽某商户 凭车况单成功匹配渤海银行库存融资 120 万元 (5分钟前)",
+            "车主李*强 通过隐私画像解锁中国平安新能源延保特惠，保费直降 450 元 (2分钟前)",
+            "广东某大型车商 一键导入信用凭证，尊享工商银行普惠经营 8.5 折降息包 (刚刚)",
+            "车牌沪A... 车主一键精准比价，平安产险极速自动化出单成功 (3分钟前)"
+        ];
+        let tickerIndex = 0;
+        setInterval(() => {
+            tickerIndex = (tickerIndex + 1) % broadcastLines.length;
+            const textContainer = document.getElementById('ticker-broadcast-text');
+            textContainer.classList.add('translate-y-4', 'opacity-0');
+            setTimeout(() => {
+                textContainer.innerText = broadcastLines[tickerIndex];
+                textContainer.classList.remove('translate-y-4', 'opacity-0');
+            }, 400);
         }, 4000);
     </script>
 </body>
